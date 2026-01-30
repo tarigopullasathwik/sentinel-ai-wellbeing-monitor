@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sentinel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        input[type=text] {
+            width: 50%;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-left: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+
+        /* RESULT TEXT */
+        #result {
+            margin-top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            animation: bounce 1s;
+            position: relative;
+        }
+
+        .happy { color: green; }
+        .sad { color: red; }
+        .neutral { color: blue; }
+
+        /* EMOJI PULSE */
+        #result span.emoji {
+            display: inline-block;
+            animation: pulse 1s infinite;
+        }
+
+        /* IMAGE CONTAINER */
+        .image-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        /* IMAGE */
+        .mood-image {
+            width: 320px;
+            border-radius: 12px;
+            animation: image-bounce 1s infinite;
+            z-index: 1;
+        }
+
+        /* FIREWORK SPARKLES */
+        .sparkle {
+            position: absolute;
+            font-size: 22px;
+            animation: sparkle 1.5s infinite;
+            opacity: 0;
+        }
+
+        .sparkle.one { top: -10px; left: 20%; animation-delay: 0s; }
+        .sparkle.two { top: 10px; right: 15%; animation-delay: 0.3s; }
+        .sparkle.three { bottom: 20px; left: 10%; animation-delay: 0.6s; }
+        .sparkle.four { bottom: -10px; right: 20%; animation-delay: 0.9s; }
+
+        /* ANIMATIONS */
+        @keyframes bounce {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes image-bounce {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-18px); }
+        }
+
+        @keyframes sparkle {
+            0% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1.2) rotate(45deg); }
+            100% { opacity: 0; transform: scale(0.5) rotate(90deg); }
+        }
+
+        /* BACKGROUND FADE */
+        body.happy { background-color: #d4fcd4; transition: 1s; }
+        body.sad { background-color: #fcd4d4; transition: 1s; }
+        body.neutral { background-color: #d4e0fc; transition: 1s; }
+
+    </style>
+</head>
+
+<body class="{% if mood %}{% if 'Happy' in mood %}happy{% elif 'Sad' in mood %}sad{% else %}neutral{% endif %}{% endif %}">
+
+    <h1>Welcome to Sentinel</h1>
+    <p>Type how you feel today:</p>
+
+    <form method="post" action="/">
+        <input type="text" name="user_text" placeholder="I feel...">
+        <button type="submit">Check Mood</button>
+    </form>
+
+    {% if mood %}
+    <div id="result" class="{% if 'Happy' in mood %}happy{% elif 'Sad' in mood %}sad{% else %}neutral{% endif %}">
+        {{ mood | safe }}
+    </div>
+
+    <div class="image-wrapper">
+        {% if 'Happy' in mood %}
+            <span class="sparkle one">✨</span>
+            <span class="sparkle two">🎉</span>
+            <span class="sparkle three">✨</span>
+            <span class="sparkle four">🎊</span>
+
+            <img src="{{ url_for('static', filename='happy.jpeg') }}" class="mood-image">
+        {% elif 'Sad' in mood %}
+            <img src="{{ url_for('static', filename='sad.jpeg') }}" class="mood-image">
+        {% else %}
+            <img src="{{ url_for('static', filename='neutral.jpeg') }}" class="mood-image">
+        {% endif %}
+    </div>
+    {% endif %}
+
+</body>
+</html>
